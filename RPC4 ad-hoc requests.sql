@@ -88,45 +88,6 @@ join dim_customer c on c.customer_code = s.customer_code
 where customer = "Atliq Exclusive" 
 group by month ,s.fiscal_year order by s.fiscal_year ;
 
-
-
-
-SELECT CONCAT(MONTHNAME(FS.date), ' (', YEAR(FS.date), ')') AS 'Month', FS.fiscal_year,
-       ROUND(SUM(G.gross_price*FS.sold_quantity), 2) AS Gross_sales_Amount
-FROM fact_sales_monthly FS JOIN fact_gross_price G ON FS.product_code = G.product_code
-						   JOIN dim_customer C ON FS.customer_code = C.customer_code 
-WHERE C.customer = 'Atliq Exclusive'
-GROUP BY  Month, FS.fiscal_year 
-ORDER BY FS.fiscal_year ;
-
-
-select monthname(date) as month  ,
-sum(gross_price* sold_quantity) as gross_sales 
-from fact_sales_monthly s 
-join fact_gross_price g
-on  s.product_code = g.product_code 
-join dim_customer c 
-on c.customer_code = s.customer_code
-where customer = "Atliq Exclusive" 
-and s.fiscal_year = 2020
-group by monthname(date);
-
--- 9092670  -- 
-WITH temp_table AS (
-    SELECT customer,
-    monthname(date) AS months ,
-    month(date) AS month_number, 
-    year(date) AS year,
-    (sold_quantity * gross_price)  AS gross_sales
- FROM fact_sales_monthly s JOIN
- fact_gross_price g ON s.product_code = g.product_code
- JOIN dim_customer c ON s.customer_code=c.customer_code
- WHERE customer="Atliq exclusive"
-)
-SELECT months,year, concat(round(sum(gross_sales)/1000000,2),"M") AS gross_sales FROM temp_table
-GROUP BY year,months,month_number
-ORDER BY year,month_number;
-
 -- Request - 8
 
 select 
